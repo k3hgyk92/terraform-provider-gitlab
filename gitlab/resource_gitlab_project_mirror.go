@@ -31,7 +31,7 @@ func resourceGitlabProjectMirror() *schema.Resource {
 				Computed: true,
 			},
 			"url": {
-				Type:     schema.TypeInt,
+				Type:     schema.TypeString,
 				ForceNew: true,
 				Required: true,
 			},
