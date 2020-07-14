@@ -69,7 +69,7 @@ func resourceGitlabMirrorCreate(d *schema.ResourceData, meta interface{}) error 
 		KeepDivergentRefs:     &keepDivergentRefs,
 	}
 
-	log.Printf("[DEBUG] create gitlab project mirror for project %d", projectID)
+	log.Printf("[DEBUG] create gitlab project mirror for project %v", projectID)
 
 	mirror, _, err := client.ProjectMirrors.AddProjectMirror(projectID, options)
 	if err != nil {
