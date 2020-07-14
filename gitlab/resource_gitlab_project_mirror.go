@@ -1,7 +1,6 @@
 package gitlab
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -80,7 +79,7 @@ func resourceGitlabMirrorCreate(d *schema.ResourceData, meta interface{}) error 
 
 	mirrorID := strconv.Itoa(mirror.ID)
 	d.SetId(buildTwoPartID(&projectID, &mirrorID))
-	return resourceGitlabProjectMembershipRead(d, meta)
+	return resourceGitlabProjectMirrorRead(d, meta)
 }
 
 func resourceGitlabMirrorUpdate(d *schema.ResourceData, meta interface{}) error {
@@ -103,7 +102,7 @@ func resourceGitlabMirrorUpdate(d *schema.ResourceData, meta interface{}) error 
 	if err != nil {
 		return err
 	}
-	return resourceGitlabProjectMembershipRead(d, meta)
+	return resourceGitlabProjectMirrorRead(d, meta)
 }
 
 // Documented remote mirrors API does not support a delete method, instead mirror is disabled.
@@ -142,13 +141,19 @@ func resourceGitlabProjectMirrorRead(d *schema.ResourceData, meta interface{}) e
 	}
 
 	var mirror *gitlab.ProjectMirror
+	found := false
 
 	for _, m := range mirrors {
+		log.Printf("[DEBUG] project mirror found %v", m.ID)
 		if m.ID == mirrorID {
 			mirror = m
-		} else {
-			return errors.New(fmt.Sprint("unable to find mirror %v on project %s", mirrorID, projectID))
+			found = true
+			return nil
 		}
+	}
+
+	if !found {
+		return fmt.Errorf("unable to find mirror %v on project %s", mirrorID, projectID)
 	}
 
 	resourceGitlabProjectMirrorSetToState(d, mirror, &projectID)
