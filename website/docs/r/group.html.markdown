@@ -50,6 +50,28 @@ enable users to request access to the group.
 
 * `parent_id` - (Optional) Integer, id of the parent group (creates a nested group).
 
+* `membership_lock` - (Optional) Boolean, defaults to false. Prevent adding new members to project membership within this group. Requires GitLab Starter/Bronze.
+
+* `share_with_group_lock` (Optional) Boolean, defaults to false. Prevent sharing a project with another group within this group.
+
+* `require_two_factor_authentication` (Optional) Boolean, defaults to false. Require all users in this group to setup Two-factor authentication.
+
+* `two_factor_grace_period` (Optional) Integer, time before Two-factor authentication is enforced (in hours). The default grace period is 48 hours.
+
+* `project_creation_level` (Optional) Determine if developers can create projects in the group. Can be `noone` (No one), `maintainer` (Maintainers), or `developer` (Developers + Maintainers). By default Developers and Maintainers can create projects. 
+
+* `auto_devops_enabled` (Optional) Boolean, defaults to false. Default to Auto DevOps pipeline for all projects within this group.
+
+* `subgroup_creation_level` (Optional) Allowed to create subgroups. Can be `owner` (Owners), or `maintainer` (Maintainers). By default only Owners can create subgroups.
+
+* `emails_disabled` (Optional) Boolean, defaults to false. 	Disable email notifications.
+
+* `mentions_disabled` (Optional) Boolean, defaults to false. Disable the capability of a group from getting mentioned.
+
+* `shared_runners_minutes_limit` (Optional) Integer, pipeline minutes quota for this group (included in plan). Can be nil (default; inherit system default), 0 (unlimited) or > 0. Requires GitLab Starter.
+
+* `extra_shared_runners_minutes_limit` (Optional) Integer, extra pipeline minutes quota for this group (purchased in addition to the minutes included in the plan). Requires GitLab Starter.
+
 ## Attributes Reference
 
 The resource exports the following attributes:

@@ -75,6 +75,65 @@ func resourceGitlabGroup() *schema.Resource {
 				Computed:  true,
 				Sensitive: true,
 			},
+			"membership_lock": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Computed: true,
+			},
+			"share_with_group_lock": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Computed: true,
+			},
+			"require_two_factor_authentication": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Computed: true,
+			},
+			"two_factor_grace_period": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Computed: true,
+			},
+			"project_creation_level": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				ValidateFunc: validation.StringInSlice([]string{"noone", "developer", "maintainer"}, false),
+			},
+			"auto_devops_enabled": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Computed: true,
+			},
+			"subgroup_creation_level": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				ValidateFunc: validation.StringInSlice([]string{"owner", "maintainer"}, false),
+			},
+			"emails_disabled": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Computed: true,
+			},
+			"mentions_disabled": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Computed: true,
+			},
+			"shared_runners_minutes_limit": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Computed:     true,
+				ValidateFunc: validation.IntAtLeast(0),
+			},
+			"extra_shared_runners_minutes_limit": {
+				Type:         schema.TypeInt,
+				Optional:     true,
+				Computed:     true,
+				ValidateFunc: validation.IntAtLeast(0),
+			},
 		},
 	}
 }
@@ -101,6 +160,66 @@ func resourceGitlabGroupCreate(d *schema.ResourceData, meta interface{}) error {
 
 	if v, ok := d.GetOk("parent_id"); ok {
 		options.ParentID = gitlab.Int(v.(int))
+	}
+
+	if v, ok := d.GetOk("membership_lock"); ok {
+		options.MembershipLock = gitlab.Bool(v.(bool))
+	}
+
+	if v, ok := d.GetOk("share_with_group_lock"); ok {
+		options.ShareWithGroupLock = gitlab.Bool(v.(bool))
+	}
+
+	if v, ok := d.GetOk("require_two_factor_authentication"); ok {
+		options.RequireTwoFactorAuth = gitlab.Bool(v.(bool))
+	}
+
+	if v, ok := d.GetOk("two_factor_grace_period"); ok {
+		options.TwoFactorGracePeriod = gitlab.Int(v.(int))
+	}
+
+	if v, ok := d.GetOk("project_creation_level"); ok {
+		var level gitlab.ProjectCreationLevelValue
+		switch v.(string) {
+		case "noone":
+			level = gitlab.NoOneProjectCreation
+		case "developer":
+			level = gitlab.DeveloperProjectCreation
+		case "maintainer":
+			level = gitlab.MaintainerProjectCreation
+		}
+		options.ProjectCreationLevel = gitlab.ProjectCreationLevel(level)
+	}
+
+	if v, ok := d.GetOk("auto_devops_enabled"); ok {
+		options.AutoDevopsEnabled = gitlab.Bool(v.(bool))
+	}
+
+	if v, ok := d.GetOk("subgroup_creation_level"); ok {
+		var level gitlab.SubGroupCreationLevelValue
+		switch v.(string) {
+		case "maintainer":
+			level = gitlab.MaintainerSubGroupCreationLevelValue
+		case "owner":
+			level = gitlab.OwnerSubGroupCreationLevelValue
+		}
+		options.SubGroupCreationLevel = gitlab.SubGroupCreationLevel(level)
+	}
+
+	if v, ok := d.GetOk("emails_disabled"); ok {
+		options.EmailsDisabled = gitlab.Bool(v.(bool))
+	}
+
+	if v, ok := d.GetOk("mentions_disabled"); ok {
+		options.MentionsDisabled = gitlab.Bool(v.(bool))
+	}
+
+	if v, ok := d.GetOk("shared_runners_minutes_limit"); ok {
+		options.SharedRunnersMinutesLimit = gitlab.Int(v.(int))
+	}
+
+	if v, ok := d.GetOk("extra_shared_runners_minutes_limit"); ok {
+		options.ExtraSharedRunnersMinutesLimit = gitlab.Int(v.(int))
 	}
 
 	log.Printf("[DEBUG] create gitlab group %q", *options.Name)
@@ -146,6 +265,17 @@ func resourceGitlabGroupRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("visibility_level", group.Visibility)
 	d.Set("parent_id", group.ParentID)
 	d.Set("runners_token", group.RunnersToken)
+	d.Set("membership_lock", group.MembershipLock)
+	d.Set("share_with_group_lock", group.ShareWithGroupLock)
+	d.Set("require_two_factor_authentication", group.RequireTwoFactorAuth)
+	d.Set("two_factor_grace_period", group.TwoFactorGracePeriod)
+	d.Set("project_creation_level", group.ProjectCreationLevel)
+	d.Set("auto_devops_enabled", group.AutoDevopsEnabled)
+	d.Set("subgroup_creation_level", group.SubGroupCreationLevel)
+	d.Set("emails_disabled", group.EmailsDisabled)
+	d.Set("mentions_disabled", group.MentionsDisabled)
+	d.Set("shared_runners_minutes_limit", group.SharedRunnersMinutesLimit)
+	d.Set("extra_shared_runners_minutes_limit", group.ExtraSharedRunnersMinutesLimit)
 
 	return nil
 }
@@ -179,6 +309,66 @@ func resourceGitlabGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 	// https://gitlab.com/gitlab-org/gitlab-ce/issues/38459
 	if v, ok := d.GetOk("visibility_level"); ok {
 		options.Visibility = stringToVisibilityLevel(v.(string))
+	}
+
+	if d.HasChange("membership_lock") {
+		options.MembershipLock = gitlab.Bool(d.Get("membership_lock").(bool))
+	}
+
+	if d.HasChange("share_with_group_lock") {
+		options.ShareWithGroupLock = gitlab.Bool(d.Get("share_with_group_lock").(bool))
+	}
+
+	if d.HasChange("require_two_factor_authentication") {
+		options.RequireTwoFactorAuth = gitlab.Bool(d.Get("require_two_factor_authentication").(bool))
+	}
+
+	if d.HasChange("two_factor_grace_period") {
+		options.TwoFactorGracePeriod = gitlab.Int(d.Get("two_factor_grace_period").(int))
+	}
+
+	if d.HasChange("project_creation_level") {
+		var level gitlab.ProjectCreationLevelValue
+		switch d.Get("project_creation_level").(string) {
+		case "noone":
+			level = gitlab.NoOneProjectCreation
+		case "developer":
+			level = gitlab.DeveloperProjectCreation
+		case "maintainer":
+			level = gitlab.MaintainerProjectCreation
+		}
+		options.ProjectCreationLevel = gitlab.ProjectCreationLevel(level)
+	}
+
+	if d.HasChange("auto_devops_enabled") {
+		options.AutoDevopsEnabled = gitlab.Bool(d.Get("auto_devops_enabled").(bool))
+	}
+
+	if d.HasChange("subgroup_creation_level") {
+		var level gitlab.SubGroupCreationLevelValue
+		switch d.Get("subgroup_creation_level").(string) {
+		case "maintainer":
+			level = gitlab.MaintainerSubGroupCreationLevelValue
+		case "owner":
+			level = gitlab.OwnerSubGroupCreationLevelValue
+		}
+		options.SubGroupCreationLevel = gitlab.SubGroupCreationLevel(level)
+	}
+
+	if d.HasChange("emails_disabled") {
+		options.EmailsDisabled = gitlab.Bool(d.Get("emails_disabled").(bool))
+	}
+
+	if d.HasChange("mentions_disabled") {
+		options.MentionsDisabled = gitlab.Bool(d.Get("mentions_disabled").(bool))
+	}
+
+	if d.HasChange("shared_runners_minutes_limit") {
+		options.SharedRunnersMinutesLimit = gitlab.Int(d.Get("shared_runners_minutes_limit").(int))
+	}
+
+	if d.HasChange("extra_shared_runners_minutes_limit") {
+		options.ExtraSharedRunnersMinutesLimit = gitlab.Int(d.Get("extra_shared_runners_minutes_limit").(int))
 	}
 
 	log.Printf("[DEBUG] update gitlab group %s", d.Id())
