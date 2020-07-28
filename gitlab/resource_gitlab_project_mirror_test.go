@@ -27,7 +27,7 @@ func TestAccGitlabProjectMirror_basic(t *testing.T) {
 			{
 				Config: testAccGitlabProjectMirrorConfig(rInt),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckGitlabProjectMirrorExists("gitlab_project_hook.foo", &hook),
+					testAccCheckGitlabProjectMirrorExists("gitlab_project_mirror.foo", &hook),
 					testAccCheckGitlabProjectMirrorAttributes(&hook, &testAccGitlabProjectMirrorExpectedAttributes{
 						URL:                   fmt.Sprintf("https://example.com/hook-%d", rInt),
 						Enabled:               true,
@@ -40,7 +40,7 @@ func TestAccGitlabProjectMirror_basic(t *testing.T) {
 			{
 				Config: testAccGitlabProjectMirrorUpdateConfig(rInt),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckGitlabProjectMirrorExists("gitlab_project_hook.foo", &hook),
+					testAccCheckGitlabProjectMirrorExists("gitlab_project_mirror.foo", &hook),
 					testAccCheckGitlabProjectMirrorAttributes(&hook, &testAccGitlabProjectMirrorExpectedAttributes{
 						URL:                   fmt.Sprintf("https://example.com/hook-%d", rInt),
 						Enabled:               false,
@@ -53,7 +53,7 @@ func TestAccGitlabProjectMirror_basic(t *testing.T) {
 			{
 				Config: testAccGitlabProjectMirrorConfig(rInt),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckGitlabProjectMirrorExists("gitlab_project_hook.foo", &hook),
+					testAccCheckGitlabProjectMirrorExists("gitlab_project_mirror.foo", &hook),
 					testAccCheckGitlabProjectMirrorAttributes(&hook, &testAccGitlabProjectMirrorExpectedAttributes{
 						URL:                   fmt.Sprintf("https://example.com/hook-%d", rInt),
 						Enabled:               true,
