@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
@@ -73,7 +74,9 @@ func testAccCheckGitlabProjectMirrorExists(n string, mirror *gitlab.ProjectMirro
 			return fmt.Errorf("Not Found: %s", n)
 		}
 
-		mirrorID, err := strconv.Atoi(rs.Primary.ID)
+		splitID := strings.Split(rs.Primary.ID, ":")
+
+		mirrorID, err := strconv.Atoi(splitID[len(splitID)-1])
 		if err != nil {
 			return err
 		}
