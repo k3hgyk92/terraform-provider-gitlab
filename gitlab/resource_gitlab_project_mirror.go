@@ -1,6 +1,7 @@
 package gitlab
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 
@@ -25,28 +26,28 @@ func resourceGitlabProjectMirror() *schema.Resource {
 				Required: true,
 			},
 			"mirror_id": {
-				Type:	schema.TypeInt,
-				Computed: true,
-			}
-			"url": {
 				Type:     schema.TypeInt,
+				Computed: true,
+			},
+			"url": {
+				Type:     schema.TypeString,
 				ForceNew: true,
 				Required: true,
 			},
 			"enabled": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default: true,
+				Default:  true,
 			},
 			"only_protected_branches": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default: true,
+				Default:  true,
 			},
 			"keep_divergent_refs": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default: true,
+				Default:  true,
 			},
 		},
 	}
@@ -58,75 +59,84 @@ func resourceGitlabMirrorCreate(d *schema.ResourceData, meta interface{}) error 
 	projectID := d.Get("project").(string)
 	URL := d.Get("url").(string)
 	enabled := d.Get("enabled").(bool)
-	onlyProtectedBranches := d.Get("only_protected_branches")
-	keepDivergentRefs := d.Get("keep_divergent_refs")
+	onlyProtectedBranches := d.Get("only_protected_branches").(bool)
+	keepDivergentRefs := d.Get("keep_divergent_refs").(bool)
 
 	options := &gitlab.AddProjectMirrorOptions{
-		URL: &URL,
-		Enabled: &enabled,
+		URL:                   &URL,
+		Enabled:               &enabled,
 		OnlyProtectedBranches: &onlyProtectedBranches,
-		KeepDivergentRefs: &keepDivergentRefs
+		KeepDivergentRefs:     &keepDivergentRefs,
 	}
 
-	log.Printf("[DEBUG] create gitlab project mirror for project %d", projectId)
+	log.Printf("[DEBUG] create gitlab project mirror for project %v", projectID)
 
-	mirror, _, err := client.ProjectMirror.AddProjectMirror(projectId, options)
+	mirror, _, err := client.ProjectMirrors.AddProjectMirror(projectID, options)
 	if err != nil {
 		return err
 	}
 	d.Set("mirror_id", mirror.ID)
-	d.SetId(buildTwoPartID(&projectId, mirror.ID))
-	return resourceGitlabProjectMembershipRead(d, meta)
+
+	mirrorID := strconv.Itoa(mirror.ID)
+	d.SetId(buildTwoPartID(&projectID, &mirrorID))
+	return resourceGitlabProjectMirrorRead(d, meta)
 }
 
-
-
-func resourceGitlabProjectMembershipUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceGitlabMirrorUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*gitlab.Client)
 
 	mirrorID := d.Get("mirror_id").(int)
+<<<<<<< HEAD
 	projectID := d.Get("project").(string)
 	URL := d.Get("url").(string)
+=======
+	projectID := d.Get("project_id").(string)
+>>>>>>> d6c9de6aa4d6d2222e1be4cd960ba3df0132f605
 	enabled := d.Get("enabled").(bool)
-	onlyProtectedBranches := d.Get("only_protected_branches")
-	keepDivergentRefs := d.Get("keep_divergent_refs")
+	onlyProtectedBranches := d.Get("only_protected_branches").(bool)
+	keepDivergentRefs := d.Get("keep_divergent_refs").(bool)
 
 	options := gitlab.EditProjectMirrorOptions{
-		URL: &URL,
-		Enabled: &enabled,
+		Enabled:               &enabled,
 		OnlyProtectedBranches: &onlyProtectedBranches,
-		KeepDivergentRefs: &keepDivergentRefs
+		KeepDivergentRefs:     &keepDivergentRefs,
 	}
-	log.Printf("[DEBUG] update gitlab project mirror %v for %s", userId, projectId)
+	log.Printf("[DEBUG] update gitlab project mirror %v for %s", mirrorID, projectID)
 
-	_, _, err := client.ProjectMirror.EditProjectMirror(projectID, mirroID, &options)
+	_, _, err := client.ProjectMirrors.EditProjectMirror(projectID, mirrorID, &options)
 	if err != nil {
 		return err
 	}
-	return resourceGitlabProjectMembershipRead(d, meta)
+	return resourceGitlabProjectMirrorRead(d, meta)
 }
 
-// Documented remote mirrors API does not support a delete method, instead mirror is disabled. 
-func resourceGitlabProjectMembershipDelete(d *schema.ResourceData, meta interface{}) error {
+// Documented remote mirrors API does not support a delete method, instead mirror is disabled.
+func resourceGitlabMirrorDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*gitlab.Client)
 
+	enabled := false
 
 	mirrorID := d.Get("mirror_id").(int)
+<<<<<<< HEAD
 	projectID := d.Get("project").(string)
 	URL := d.Get("url").(string)
 	enabled := d.Get("enabled").(bool)
 	onlyProtectedBranches := d.Get("only_protected_branches")
 	keepDivergentRefs := d.Get("keep_divergent_refs")
+=======
+	projectID := d.Get("project_id").(string)
+	onlyProtectedBranches := d.Get("only_protected_branches").(bool)
+	keepDivergentRefs := d.Get("keep_divergent_refs").(bool)
+>>>>>>> d6c9de6aa4d6d2222e1be4cd960ba3df0132f605
 
 	options := gitlab.EditProjectMirrorOptions{
-		URL: &URL,
-		Enabled: false,
+		Enabled:               &enabled,
 		OnlyProtectedBranches: &onlyProtectedBranches,
-		KeepDivergentRefs: &keepDivergentRefs
+		KeepDivergentRefs:     &keepDivergentRefs,
 	}
-	log.Printf("[DEBUG] Disable gitlab project mirror %v for %s", userId, projectId)
+	log.Printf("[DEBUG] Disable gitlab project mirror %v for %s", mirrorID, projectID)
 
-	_, _, err := client.ProjectMirror.EditProjectMirror(projectID, mirroID, &options)
+	_, _, err := client.ProjectMirrors.EditProjectMirror(projectID, mirrorID, &options)
 
 	return err
 }
@@ -138,13 +148,21 @@ func resourceGitlabProjectMirrorRead(d *schema.ResourceData, meta interface{}) e
 	projectID := d.Get("URL").(string)
 	log.Printf("[DEBUG] read gitlab project mirror %s id %v", projectID, mirrorID)
 
-	mirrors := gitlab.projectMirror.ListProjectMirror(projectID)
+	mirrors, _, err := client.ProjectMirrors.ListProjectMirror(projectID)
 
-	var mirror *ProjectMirror
+	if err != nil {
+		return err
+	}
 
-	for i, m := range mirrors {
+	var mirror *gitlab.ProjectMirror
+	found := false
+
+	for _, m := range mirrors {
+		log.Printf("[DEBUG] project mirror found %v", m.ID)
 		if m.ID == mirrorID {
 			mirror = m
+			found = true
+			return nil
 		}
 		else {
 			set("")
@@ -152,13 +170,19 @@ func resourceGitlabProjectMirrorRead(d *schema.ResourceData, meta interface{}) e
 		}
 	}
 
-	resourceGitlabProjectMirrorSetToState(d, mirror, &projectId)
+	if !found {
+		return fmt.Errorf("unable to find mirror %v on project %s", mirrorID, projectID)
+	}
+
+	resourceGitlabProjectMirrorSetToState(d, mirror, &projectID)
 	return nil
 }
 
-func resourceGitlabProjectMirrorSetToState(d *schema.ResourceData, projectMirror *gitlab.ProjectMirror, projectId *string) {
+func resourceGitlabProjectMirrorSetToState(d *schema.ResourceData, projectMirror *gitlab.ProjectMirror, projectID *string) {
+
+	mirrorID := strconv.Itoa(projectMirror.ID)
 	d.Set("enabled", projectMirror.Enabled)
-	d.Set("only_protected_branches", protectMirror.OnlyProtectedBranches)
+	d.Set("only_protected_branches", projectMirror.OnlyProtectedBranches)
 	d.Set("keep_divergent_refs", projectMirror.KeepDivergentRefs)
-	d.SetId(buildTwoPartID(&projectId, projectMirror.ID))
+	d.SetId(buildTwoPartID(projectID, &mirrorID))
 }
