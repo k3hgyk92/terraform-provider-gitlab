@@ -1,7 +1,6 @@
 package gitlab
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 
@@ -166,7 +165,8 @@ func resourceGitlabProjectMirrorRead(d *schema.ResourceData, meta interface{}) e
 	}
 
 	if !found {
-		return fmt.Errorf("unable to find mirror %v on project %s", mirrorID, projectID)
+		d.SetId("")
+		return nil
 	}
 
 	resourceGitlabProjectMirrorSetToState(d, mirror, &projectID)
