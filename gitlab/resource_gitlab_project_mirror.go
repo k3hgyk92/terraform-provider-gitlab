@@ -19,7 +19,7 @@ func resourceGitlabProjectMirror() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"project_id": {
+			"project": {
 				Type:     schema.TypeString,
 				ForceNew: true,
 				Required: true,
@@ -55,7 +55,7 @@ func resourceGitlabProjectMirror() *schema.Resource {
 func resourceGitlabMirrorCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*gitlab.Client)
 
-	projectID := d.Get("project_id").(string)
+	projectID := d.Get("project").(string)
 	URL := d.Get("url").(string)
 	enabled := d.Get("enabled").(bool)
 	onlyProtectedBranches := d.Get("only_protected_branches")
@@ -85,7 +85,7 @@ func resourceGitlabProjectMembershipUpdate(d *schema.ResourceData, meta interfac
 	client := meta.(*gitlab.Client)
 
 	mirrorID := d.Get("mirror_id").(int)
-	projectID := d.Get("project_id").(string)
+	projectID := d.Get("project").(string)
 	URL := d.Get("url").(string)
 	enabled := d.Get("enabled").(bool)
 	onlyProtectedBranches := d.Get("only_protected_branches")
@@ -112,7 +112,7 @@ func resourceGitlabProjectMembershipDelete(d *schema.ResourceData, meta interfac
 
 
 	mirrorID := d.Get("mirror_id").(int)
-	projectID := d.Get("project_id").(string)
+	projectID := d.Get("project").(string)
 	URL := d.Get("url").(string)
 	enabled := d.Get("enabled").(bool)
 	onlyProtectedBranches := d.Get("only_protected_branches")
@@ -134,7 +134,7 @@ func resourceGitlabProjectMembershipDelete(d *schema.ResourceData, meta interfac
 func resourceGitlabProjectMirrorRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*gitlab.Client)
 	mirrorID := d.Get("mirror_id").(int)
-	projectID := d.Get("project_id").(string)
+	projectID := d.Get("project").(string)
 	projectID := d.Get("URL").(string)
 	log.Printf("[DEBUG] read gitlab project mirror %s id %v", projectID, mirrorID)
 
@@ -147,7 +147,8 @@ func resourceGitlabProjectMirrorRead(d *schema.ResourceData, meta interface{}) e
 			mirror = m
 		}
 		else {
-			return errors.New("unable to find mirror %v on project %s", mirrorID, projectID)
+			set("")
+			return nil
 		}
 	}
 
