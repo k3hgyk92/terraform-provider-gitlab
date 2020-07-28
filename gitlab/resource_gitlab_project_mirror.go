@@ -86,12 +86,7 @@ func resourceGitlabMirrorUpdate(d *schema.ResourceData, meta interface{}) error 
 	client := meta.(*gitlab.Client)
 
 	mirrorID := d.Get("mirror_id").(int)
-<<<<<<< HEAD
 	projectID := d.Get("project").(string)
-	URL := d.Get("url").(string)
-=======
-	projectID := d.Get("project_id").(string)
->>>>>>> d6c9de6aa4d6d2222e1be4cd960ba3df0132f605
 	enabled := d.Get("enabled").(bool)
 	onlyProtectedBranches := d.Get("only_protected_branches").(bool)
 	keepDivergentRefs := d.Get("keep_divergent_refs").(bool)
@@ -117,17 +112,9 @@ func resourceGitlabMirrorDelete(d *schema.ResourceData, meta interface{}) error 
 	enabled := false
 
 	mirrorID := d.Get("mirror_id").(int)
-<<<<<<< HEAD
 	projectID := d.Get("project").(string)
-	URL := d.Get("url").(string)
-	enabled := d.Get("enabled").(bool)
-	onlyProtectedBranches := d.Get("only_protected_branches")
-	keepDivergentRefs := d.Get("keep_divergent_refs")
-=======
-	projectID := d.Get("project_id").(string)
 	onlyProtectedBranches := d.Get("only_protected_branches").(bool)
 	keepDivergentRefs := d.Get("keep_divergent_refs").(bool)
->>>>>>> d6c9de6aa4d6d2222e1be4cd960ba3df0132f605
 
 	options := gitlab.EditProjectMirrorOptions{
 		Enabled:               &enabled,
@@ -145,7 +132,6 @@ func resourceGitlabProjectMirrorRead(d *schema.ResourceData, meta interface{}) e
 	client := meta.(*gitlab.Client)
 	mirrorID := d.Get("mirror_id").(int)
 	projectID := d.Get("project").(string)
-	projectID := d.Get("URL").(string)
 	log.Printf("[DEBUG] read gitlab project mirror %s id %v", projectID, mirrorID)
 
 	mirrors, _, err := client.ProjectMirrors.ListProjectMirror(projectID)
@@ -163,9 +149,8 @@ func resourceGitlabProjectMirrorRead(d *schema.ResourceData, meta interface{}) e
 			mirror = m
 			found = true
 			return nil
-		}
-		else {
-			set("")
+		} else {
+			d.SetId("")
 			return nil
 		}
 	}
