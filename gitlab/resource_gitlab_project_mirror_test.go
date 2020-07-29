@@ -67,6 +67,26 @@ func TestAccGitlabProjectMirror_basic(t *testing.T) {
 	})
 }
 
+func TestAccGitlabProjectMirror_import(t *testing.T) {
+	rInt := acctest.RandInt()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckGitlabProjectMirrorDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccGitlabProjectMirrorConfig(rInt),
+			},
+			{
+				ResourceName:      "gitlab_project_mirror.foo",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
 func testAccCheckGitlabProjectMirrorExists(n string, mirror *gitlab.ProjectMirror) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[n]
