@@ -79,9 +79,10 @@ func TestAccGitlabProjectMirror_import(t *testing.T) {
 				Config: testAccGitlabProjectMirrorConfig(rInt),
 			},
 			{
-				ResourceName:      "gitlab_project_mirror.foo",
-				ImportState:       true,
-				ImportStateVerify: true,
+				ResourceName:            "gitlab_project_mirror.foo",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"enabled"},
 			},
 		},
 	})

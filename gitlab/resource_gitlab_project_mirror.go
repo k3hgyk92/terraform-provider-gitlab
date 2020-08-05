@@ -3,6 +3,7 @@ package gitlab
 import (
 	"log"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/xanzy/go-gitlab"
@@ -140,8 +141,14 @@ func resourceGitlabMirrorDelete(d *schema.ResourceData, meta interface{}) error 
 
 func resourceGitlabProjectMirrorRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*gitlab.Client)
-	mirrorID := d.Get("mirror_id").(int)
-	projectID := d.Get("project").(string)
+
+	ids := strings.Split(d.Id(), ":")
+	mirrorID := ids[1]
+	projectID := ids[0]
+	integerMirrorID, err := strconv.Atoi(mirrorID)
+	if err != nil {
+		return err
+	}
 	log.Printf("[DEBUG] read gitlab project mirror %s id %v", projectID, mirrorID)
 
 	mirrors, _, err := client.ProjectMirrors.ListProjectMirror(projectID)
@@ -155,7 +162,7 @@ func resourceGitlabProjectMirrorRead(d *schema.ResourceData, meta interface{}) e
 
 	for _, m := range mirrors {
 		log.Printf("[DEBUG] project mirror found %v", m.ID)
-		if m.ID == mirrorID {
+		if m.ID == integerMirrorID {
 			mirror = m
 		}
 		else {
