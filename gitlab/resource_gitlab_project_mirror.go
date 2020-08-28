@@ -143,8 +143,8 @@ func resourceGitlabProjectMirrorRead(d *schema.ResourceData, meta interface{}) e
 	client := meta.(*gitlab.Client)
 
 	ids := strings.Split(d.Id(), ":")
-	mirrorID := ids[1]
 	projectID := ids[0]
+	mirrorID := ids[1]
 	integerMirrorID, err := strconv.Atoi(mirrorID)
 	if err != nil {
 		return err
