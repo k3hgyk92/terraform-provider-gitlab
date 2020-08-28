@@ -87,7 +87,6 @@ func resourceGitlabMirrorUpdate(d *schema.ResourceData, meta interface{}) error 
 
 	mirrorID := d.Get("mirror_id").(int)
 	projectID := d.Get("project").(string)
-
 	enabled := d.Get("enabled").(bool)
 	onlyProtectedBranches := d.Get("only_protected_branches").(bool)
 	keepDivergentRefs := d.Get("keep_divergent_refs").(bool)
@@ -109,11 +108,14 @@ func resourceGitlabMirrorUpdate(d *schema.ResourceData, meta interface{}) error 
 // Documented remote mirrors API does not support a delete method, instead mirror is disabled.
 func resourceGitlabMirrorDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*gitlab.Client)
+
+	enabled := false
+
 	mirrorID := d.Get("mirror_id").(int)
 	projectID := d.Get("project").(string)
-	enabled := d.Get("enabled").(bool)
 	onlyProtectedBranches := d.Get("only_protected_branches").(bool)
 	keepDivergentRefs := d.Get("keep_divergent_refs").(bool)
+
 	options := gitlab.EditProjectMirrorOptions{
 		Enabled:               &enabled,
 		OnlyProtectedBranches: &onlyProtectedBranches,
@@ -151,9 +153,7 @@ func resourceGitlabProjectMirrorRead(d *schema.ResourceData, meta interface{}) e
 		log.Printf("[DEBUG] project mirror found %v", m.ID)
 		if m.ID == integerMirrorID {
 			mirror = m
-		} else {
-			d.SetId("")
-			return nil
+			found = true
 		}
 	}
 
