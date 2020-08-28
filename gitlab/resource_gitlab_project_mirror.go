@@ -87,13 +87,8 @@ func resourceGitlabMirrorUpdate(d *schema.ResourceData, meta interface{}) error 
 
 	mirrorID := d.Get("mirror_id").(int)
 	projectID := d.Get("project").(string)
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 	URL := d.Get("url").(string)
-=======
->>>>>>> f5cd03d... resoling merge issues
-=======
->>>>>>> 34b20a64f0ce9a07408f021809249e3901e6836f
 	enabled := d.Get("enabled").(bool)
 	onlyProtectedBranches := d.Get("only_protected_branches").(bool)
 	keepDivergentRefs := d.Get("keep_divergent_refs").(bool)
@@ -120,21 +115,14 @@ func resourceGitlabMirrorDelete(d *schema.ResourceData, meta interface{}) error 
 
 	mirrorID := d.Get("mirror_id").(int)
 	projectID := d.Get("project").(string)
-<<<<<<< HEAD
-<<<<<<< HEAD
 	URL := d.Get("url").(string)
 	enabled := d.Get("enabled").(bool)
 	onlyProtectedBranches := d.Get("only_protected_branches")
 	keepDivergentRefs := d.Get("keep_divergent_refs")
-=======
 	onlyProtectedBranches := d.Get("only_protected_branches").(bool)
 	keepDivergentRefs := d.Get("keep_divergent_refs").(bool)
->>>>>>> f5cd03d... resoling merge issues
-=======
 	onlyProtectedBranches := d.Get("only_protected_branches").(bool)
 	keepDivergentRefs := d.Get("keep_divergent_refs").(bool)
->>>>>>> 34b20a64f0ce9a07408f021809249e3901e6836f
-
 	options := gitlab.EditProjectMirrorOptions{
 		Enabled:               &enabled,
 		OnlyProtectedBranches: &onlyProtectedBranches,
