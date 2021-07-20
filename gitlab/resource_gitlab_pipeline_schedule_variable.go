@@ -12,6 +12,8 @@ import (
 func resourceGitlabPipelineScheduleVariable() *schema.Resource {
 	// lintignore: XR002 // TODO: Resolve this tfproviderlint issue
 	return &schema.Resource{
+		Description: "This resource allows you to create and manage variables for pipeline schedules.",
+
 		Create: resourceGitlabPipelineScheduleVariableCreate,
 		Read:   resourceGitlabPipelineScheduleVariableRead,
 		Update: resourceGitlabPipelineScheduleVariableUpdate,
@@ -19,23 +21,27 @@ func resourceGitlabPipelineScheduleVariable() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"project": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Description: "The id of the project to add the schedule to.",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 			},
 			"pipeline_schedule_id": {
-				Type:     schema.TypeInt,
-				Required: true,
-				ForceNew: true,
+				Description: "The id of the pipeline schedule.",
+				Type:        schema.TypeInt,
+				Required:    true,
+				ForceNew:    true,
 			},
 			"key": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Description: "Name of the variable.",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 			},
 			"value": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Value of the variable.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 		},
 	}

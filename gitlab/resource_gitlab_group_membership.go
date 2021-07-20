@@ -16,6 +16,8 @@ func resourceGitlabGroupMembership() *schema.Resource {
 		acceptedAccessLevels = append(acceptedAccessLevels, k)
 	}
 	return &schema.Resource{
+		Description: "This resource allows you to add a user to an existing group.",
+
 		Create: resourceGitlabGroupMembershipCreate,
 		Read:   resourceGitlabGroupMembershipRead,
 		Update: resourceGitlabGroupMembershipUpdate,
@@ -26,21 +28,25 @@ func resourceGitlabGroupMembership() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"group_id": {
-				Type:     schema.TypeString,
-				ForceNew: true,
-				Required: true,
+				Description: "The id of the group.",
+				Type:        schema.TypeString,
+				ForceNew:    true,
+				Required:    true,
 			},
 			"user_id": {
-				Type:     schema.TypeInt,
-				ForceNew: true,
-				Required: true,
+				Description: "The id of the user.",
+				Type:        schema.TypeInt,
+				ForceNew:    true,
+				Required:    true,
 			},
 			"access_level": {
+				Description:  "Acceptable values are: guest, reporter, developer, maintainer, owner.",
 				Type:         schema.TypeString,
 				ValidateFunc: validateValueFunc(acceptedAccessLevels),
 				Required:     true,
 			},
 			"expires_at": {
+				Description:  "Expiration date for the group membership. Format: `YYYY-MM-DD`",
 				Type:         schema.TypeString, // Format YYYY-MM-DD
 				ValidateFunc: validateDateFunc,
 				Optional:     true,

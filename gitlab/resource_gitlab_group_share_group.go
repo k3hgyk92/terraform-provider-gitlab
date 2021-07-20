@@ -19,6 +19,8 @@ func resourceGitlabGroupShareGroup() *schema.Resource {
 	}
 
 	return &schema.Resource{
+		Description: "This resource allows you to share a group with another group",
+
 		Create: resourceGitlabGroupShareGroupCreate,
 		Read:   resourceGitlabGroupShareGroupRead,
 		Delete: resourceGitlabGroupShareGroupDelete,
@@ -27,22 +29,26 @@ func resourceGitlabGroupShareGroup() *schema.Resource {
 		},
 		Schema: map[string]*schema.Schema{
 			"group_id": {
-				Type:     schema.TypeString,
-				ForceNew: true,
-				Required: true,
+				Description: "The id of the main group.",
+				Type:        schema.TypeString,
+				ForceNew:    true,
+				Required:    true,
 			},
 			"share_group_id": {
-				Type:     schema.TypeInt,
-				ForceNew: true,
-				Required: true,
+				Description: "The id of an additional group which will be shared with the main group.",
+				Type:        schema.TypeInt,
+				ForceNew:    true,
+				Required:    true,
 			},
 			"group_access": {
+				Description:  "One of five levels of access to the group.",
 				Type:         schema.TypeString,
 				ValidateFunc: validateValueFunc(acceptedAccessLevels),
 				ForceNew:     true,
 				Required:     true,
 			},
 			"expires_at": {
+				Description:  "Share expiration date. Format: `YYYY-MM-DD`",
 				Type:         schema.TypeString, // Format YYYY-MM-DD
 				ValidateFunc: validateDateFunc,
 				ForceNew:     true,

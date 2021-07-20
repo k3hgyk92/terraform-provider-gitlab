@@ -15,21 +15,26 @@ func resourceGitlabTagProtection() *schema.Resource {
 	}
 	// lintignore: XR002 // TODO: Resolve this tfproviderlint issue
 	return &schema.Resource{
+		Description: "This resource allows you to protect a specific tag or wildcard by an access level so that the user with less access level cannot Create the tags.",
+
 		Create: resourceGitlabTagProtectionCreate,
 		Read:   resourceGitlabTagProtectionRead,
 		Delete: resourceGitlabTagProtectionDelete,
 		Schema: map[string]*schema.Schema{
 			"project": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Description: "The id of the project.",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 			},
 			"tag": {
-				Type:     schema.TypeString,
-				ForceNew: true,
-				Required: true,
+				Description: "Name of the tag or wildcard.",
+				Type:        schema.TypeString,
+				ForceNew:    true,
+				Required:    true,
 			},
 			"create_access_level": {
+				Description:  "One of five levels of access to the project.",
 				Type:         schema.TypeString,
 				ValidateFunc: validateValueFunc(acceptedAccessLevels),
 				Required:     true,

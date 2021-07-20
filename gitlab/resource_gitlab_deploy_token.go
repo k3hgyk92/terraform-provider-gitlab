@@ -15,35 +15,42 @@ import (
 func resourceGitlabDeployToken() *schema.Resource {
 	// lintignore: XR002 // TODO: Resolve this tfproviderlint issue
 	return &schema.Resource{
+		Description: "This resource allows you to create and manage deploy token for your GitLab projects and groups.",
+
 		Create: resourceGitlabDeployTokenCreate,
 		Read:   resourceGitlabDeployTokenRead,
 		Delete: resourceGitlabDeployTokenDelete,
 
 		Schema: map[string]*schema.Schema{
 			"project": {
+				Description:  "The name or id of the project to add the deploy token to.",
 				Type:         schema.TypeString,
 				Optional:     true,
 				ExactlyOneOf: []string{"project", "group"},
 				ForceNew:     true,
 			},
 			"group": {
+				Description:  "The name or id of the group to add the deploy token to.",
 				Type:         schema.TypeString,
 				Optional:     true,
 				ExactlyOneOf: []string{"project", "group"},
 				ForceNew:     true,
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Description: "A name to describe the deploy token with.",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 			},
 			"username": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-				ForceNew: true,
+				Description: "A username for the deploy token. Default is `gitlab+deploy-token-{n}`.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				ForceNew:    true,
 			},
 			"expires_at": {
+				Description:      "Time the token will expire it, RFC3339 format. Will not expire per default.",
 				Type:             schema.TypeString,
 				Optional:         true,
 				ValidateFunc:     validation.IsRFC3339Time,
@@ -51,9 +58,10 @@ func resourceGitlabDeployToken() *schema.Resource {
 				ForceNew:         true,
 			},
 			"scopes": {
-				Type:     schema.TypeSet,
-				Required: true,
-				ForceNew: true,
+				Description: "Valid values: `read_repository`, `read_registry`.",
+				Type:        schema.TypeSet,
+				Required:    true,
+				ForceNew:    true,
 				Elem: &schema.Schema{
 					Type:         schema.TypeString,
 					ValidateFunc: validation.StringInSlice([]string{"read_registry", "read_repository"}, false),
@@ -61,9 +69,10 @@ func resourceGitlabDeployToken() *schema.Resource {
 			},
 
 			"token": {
-				Type:      schema.TypeString,
-				Computed:  true,
-				Sensitive: true,
+				Description: "The secret token. This is only populated when creating a new deploy token.",
+				Type:        schema.TypeString,
+				Computed:    true,
+				Sensitive:   true,
 			},
 		},
 	}

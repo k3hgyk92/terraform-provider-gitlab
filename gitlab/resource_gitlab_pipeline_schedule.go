@@ -13,6 +13,10 @@ import (
 
 func resourceGitlabPipelineSchedule() *schema.Resource {
 	return &schema.Resource{
+		Description: "This resource allows you to create and manage pipeline schedules.\n" +
+			"For further information on clusters, consult the [gitlab\n" +
+			"documentation](https://docs.gitlab.com/ce/user/project/pipelines/schedules.html).",
+
 		Create: resourceGitlabPipelineScheduleCreate,
 		Read:   resourceGitlabPipelineScheduleRead,
 		Update: resourceGitlabPipelineScheduleUpdate,
@@ -23,31 +27,37 @@ func resourceGitlabPipelineSchedule() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"project": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Description: "The name or id of the project to add the schedule to.",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "The description of the pipeline schedule.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"ref": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "The branch/tag name to be triggered.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"cron": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "The cron (e.g. `0 1 * * *`).",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"cron_timezone": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "UTC",
+				Description: "The timezone.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "UTC",
 			},
 			"active": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  true,
+				Description: "The activation of pipeline schedule. If false is set, the pipeline schedule will deactivated initially.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
 			},
 		},
 	}
@@ -57,7 +67,6 @@ func resourceGitlabPipelineScheduleCreate(d *schema.ResourceData, meta interface
 	client := meta.(*gitlab.Client)
 	project := d.Get("project").(string)
 	options := &gitlab.CreatePipelineScheduleOptions{
-		Description:  gitlab.String(d.Get("description").(string)),
 		Ref:          gitlab.String(d.Get("ref").(string)),
 		Cron:         gitlab.String(d.Get("cron").(string)),
 		CronTimezone: gitlab.String(d.Get("cron_timezone").(string)),
@@ -127,7 +136,6 @@ func resourceGitlabPipelineScheduleUpdate(d *schema.ResourceData, meta interface
 	client := meta.(*gitlab.Client)
 	project := d.Get("project").(string)
 	options := &gitlab.EditPipelineScheduleOptions{
-		Description:  gitlab.String(d.Get("description").(string)),
 		Ref:          gitlab.String(d.Get("ref").(string)),
 		Cron:         gitlab.String(d.Get("cron").(string)),
 		CronTimezone: gitlab.String(d.Get("cron_timezone").(string)),

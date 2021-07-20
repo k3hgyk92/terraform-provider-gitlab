@@ -13,6 +13,8 @@ func resourceGitlabProjectShareGroup() *schema.Resource {
 	acceptedAccessLevels := []string{"guest", "reporter", "developer", "maintainer"}
 
 	return &schema.Resource{
+		Description: "This resource allows you to share a project with a group",
+
 		Create: resourceGitlabProjectShareGroupCreate,
 		Read:   resourceGitlabProjectShareGroupRead,
 		Delete: resourceGitlabProjectShareGroupDelete,
@@ -22,16 +24,19 @@ func resourceGitlabProjectShareGroup() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"project_id": {
-				Type:     schema.TypeString,
-				ForceNew: true,
-				Required: true,
+				Description: "The id of the project.",
+				Type:        schema.TypeString,
+				ForceNew:    true,
+				Required:    true,
 			},
 			"group_id": {
-				Type:     schema.TypeInt,
-				ForceNew: true,
-				Required: true,
+				Description: "The id of the group.",
+				Type:        schema.TypeInt,
+				ForceNew:    true,
+				Required:    true,
 			},
 			"access_level": {
+				Description:  "One of five levels of access to the project.",
 				Type:         schema.TypeString,
 				ValidateFunc: validateValueFunc(acceptedAccessLevels),
 				ForceNew:     true,

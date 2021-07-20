@@ -18,6 +18,8 @@ func resourceGitlabProjectMembership() *schema.Resource {
 		}
 	}
 	return &schema.Resource{
+		Description: "This resource allows you to add a current user to an existing project with a set access level.",
+
 		Create: resourceGitlabProjectMembershipCreate,
 		Read:   resourceGitlabProjectMembershipRead,
 		Update: resourceGitlabProjectMembershipUpdate,
@@ -28,16 +30,19 @@ func resourceGitlabProjectMembership() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"project_id": {
-				Type:     schema.TypeString,
-				ForceNew: true,
-				Required: true,
+				Description: "The id of the project.",
+				Type:        schema.TypeString,
+				ForceNew:    true,
+				Required:    true,
 			},
 			"user_id": {
-				Type:     schema.TypeInt,
-				ForceNew: true,
-				Required: true,
+				Description: "The id of the user.",
+				Type:        schema.TypeInt,
+				ForceNew:    true,
+				Required:    true,
 			},
 			"access_level": {
+				Description:  "One of five levels of access to the project.",
 				Type:         schema.TypeString,
 				ValidateFunc: validateValueFunc(acceptedAccessLevels),
 				Required:     true,

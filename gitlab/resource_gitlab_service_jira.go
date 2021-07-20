@@ -11,6 +11,8 @@ import (
 
 func resourceGitlabServiceJira() *schema.Resource {
 	return &schema.Resource{
+		Description: "This resource allows you to manage Jira integration.",
+
 		Create: resourceGitlabServiceJiraCreate,
 		Read:   resourceGitlabServiceJiraRead,
 		Update: resourceGitlabServiceJiraUpdate,
@@ -21,9 +23,10 @@ func resourceGitlabServiceJira() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"project": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Description: "ID of the project you want to activate integration on.",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 			},
 			"title": {
 				Type:     schema.TypeString,
@@ -42,42 +45,50 @@ func resourceGitlabServiceJira() *schema.Resource {
 				Computed: true,
 			},
 			"url": {
+				Description:  "The URL to the JIRA project which is being linked to this GitLab project. For example, https://jira.example.com.",
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validateURLFunc,
 			},
 			"project_key": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "",
+				Description: "The short identifier for your JIRA project, all uppercase, e.g., PROJ.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "",
 			},
 			"username": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "The username of the user created to be used with GitLab/JIRA.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"password": {
-				Type:      schema.TypeString,
-				Required:  true,
-				Sensitive: true,
+				Description: "The password of the user created to be used with GitLab/JIRA.",
+				Type:        schema.TypeString,
+				Required:    true,
+				Sensitive:   true,
 			},
 			"jira_issue_transition_id": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "The ID of a transition that moves issues to a closed state. You can find this number under the JIRA workflow administration (Administration > Issues > Workflows) by selecting View under Operations of the desired workflow of your project. By default, this ID is set to 2.",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			"commit_events": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Computed: true,
+				Description: "Enable notifications for commit events",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
 			},
 			"merge_requests_events": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Computed: true,
+				Description: "Enable notifications for merge request events",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
 			},
 			"comment_on_event_enabled": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Computed: true,
+				Description: "Enable comments inside Jira issues on each GitLab event (commit / merge request)",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}
