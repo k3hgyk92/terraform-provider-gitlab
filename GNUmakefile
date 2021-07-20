@@ -41,7 +41,7 @@ fmt:
 	gofmt -w $(GOFMT_FILES)
 
 tfproviderlint:
-	go run github.com/bflad/tfproviderlint/cmd/tfproviderlintx \
+	/Users/asnyder/repos/tfproviderlint/tfproviderlintx \
 	-XAT001=false -XR003=false -XS002=false \
 	./...
 
