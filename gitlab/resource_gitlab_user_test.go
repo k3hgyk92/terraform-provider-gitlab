@@ -77,12 +77,10 @@ func TestAccGitlabUser_basic(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      "gitlab_user.foo",
-				ImportState:       true,
-				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					"password",
-				},
+				ResourceName:            "gitlab_user.foo",
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateVerifyIgnore: []string{"password", "skip_confirmation"}, // Only valid during creation.
 			},
 		},
 	})
