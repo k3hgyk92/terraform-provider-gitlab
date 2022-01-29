@@ -1,16 +1,7 @@
-# Checks for documentation and examples.
-
-name: docs
+# Lint jobs are are fast checks that do not require any permissions to run.
 
 on:
-  push:
-    paths-ignore:
-      - 'README.md'
-      - 'CHANGELOG.md'
-  pull_request:
-    paths-ignore:
-      - 'README.md'
-      - 'CHANGELOG.md'
+  workflow_call: {}
 
 jobs:
   go-version:
@@ -54,3 +45,37 @@ jobs:
       - name: Check generated files
         run: |
           [ -z "$(git status --short)" ] || { echo "Error: Files should have been generated:"; git status --short; echo "Diff:"; git diff HEAD; exit 1; }
+
+  tfprovider-lint:
+    runs-on: ubuntu-latest
+    needs: [go-version]
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ${{ needs.go-version.outputs.go-version }}
+      - uses: actions/checkout@v2
+      - run: make lint-tfprovider
+
+  golangci-lint:
+    runs-on: ubuntu-latest
+    needs: [go-version]
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ${{ needs.go-version.outputs.go-version }}
+      - uses: actions/checkout@v2
+      - run: make lint-golangci
+
+  unit-test:
+    runs-on: ${{ matrix.os }}
+    needs: [go-version]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ${{ needs.go-version.outputs.go-version }}
+      - uses: actions/checkout@v2
+      - run: make test
