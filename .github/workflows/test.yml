@@ -92,7 +92,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     needs: [go-version]
-    if: github.event_name == 'push' && github.repository_owner == 'gitlabhq'
+    if: github.event_name == 'push' && github.repository_owner == 'armsnyder'
     steps:
       - uses: actions/setup-go@v2
         with:
