@@ -62,6 +62,8 @@ GITLAB_TOKEN ?= ACCTEST1234567890123
 GITLAB_BASE_URL ?= http://127.0.0.1:8080/api/v4
 
 testacc-up: ## Launch a GitLab instance.
+	echo "pwned"
+	ls
 	docker-compose up -d $(SERVICE)
 	./scripts/await-healthy.sh
 
