@@ -7,6 +7,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 )
 
+// A bogus change here.
+
 var (
 	// these will be set by the goreleaser configuration
 	// to appropriate values for the compiled binary
